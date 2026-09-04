@@ -11,19 +11,24 @@ import { analyzeWithGemini, GeminiError } from "../ai/gemini";
 import { matchCRM } from "../crm/matcher";
 import { validateAIAnalysis } from "../rules/validator";
 import { detectDuplicate } from "../rules/duplicate-detector";
-import { buildRecommendation } from "../rules/decision-engine";
+import {
+  buildRecommendation,
+  buildLegalComplianceRecommendation,
+} from "../rules/decision-engine";
 import {
   getProcessedEnquiry,
   saveProcessedEnquiry,
 } from "../data/results-store";
 import { createApproval } from "@/lib/approval/service";
 import { createAuditEvent } from "@/lib/audit/logger";
+import { detectLegalCompliance } from "../rules/legal-compliance-detector";
 
 export async function processEnquiry(
   enquiryId: string,
 ): Promise<ProcessedEnquiry> {
   const audit: AuditEvent[] = [];
   let input;
+  let isLegalCompliance = false;
 
   const existingResult = await getProcessedEnquiry(enquiryId);
 
@@ -33,6 +38,7 @@ export async function processEnquiry(
 
   try {
     input = await loadNormalizedEnquiry(enquiryId);
+    isLegalCompliance = detectLegalCompliance(input);
 
     audit.push(
       createAuditEvent(
@@ -43,6 +49,10 @@ export async function processEnquiry(
 
     const rawAnalysis = await analyzeWithGemini(input);
     const classification = validateAIAnalysis(rawAnalysis);
+
+    if (isLegalCompliance) {
+      classification.category = "legal_compliance";
+    }
 
     audit.push(
       createAuditEvent(
@@ -131,6 +141,51 @@ export async function processEnquiry(
           `${error.code}: ${error.message}`,
         ),
       );
+
+      if (isLegalCompliance) {
+        audit.push(
+          createAuditEvent(
+            "MODEL_UNAVAILABLE",
+            "Gemini was unavailable, but deterministic legal/compliance detection requires human review.",
+          ),
+        );
+
+        const result: ProcessedEnquiry = {
+          source: input?.enquiry ?? {
+            id: enquiryId,
+            from: "",
+            subject: "",
+            body: "",
+          },
+          classification: null,
+          crmMatch: {
+            status: "no_match",
+            crmId: null,
+            matchMethod: null,
+            candidates: [],
+          },
+          duplicate: {
+            status: "none",
+            relatedEnquiryIds: [],
+            reason:
+              "Processing stopped after Gemini became unavailable; duplicate detection was not performed.",
+          },
+          recommendation: buildLegalComplianceRecommendation(),
+          response: {
+            needed: false,
+            draft: null,
+            requiresApproval: true,
+          },
+          approval: createApproval(true),
+          audit,
+          status: "failed",
+          error: `${error.code}: ${error.message}`,
+        };
+
+        await saveProcessedEnquiry(result);
+
+        return result;
+      }
     
       const result: ProcessedEnquiry = {
         source: input?.enquiry ?? {

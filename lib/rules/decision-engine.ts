@@ -2,10 +2,23 @@ import type {
     AIAnalysis,
     Recommendation,
   } from "../data/types";
+
+export function buildLegalComplianceRecommendation(): Recommendation {
+  return {
+    action: "review_legal_compliance",
+    owner: "Legal and Compliance",
+    reason:
+      "Legal or compliance enquiries always require human review before any external or consequential action.",
+    requiresApproval: true,
+  };
+}
   
   export function buildRecommendation(
     analysis: AIAnalysis,
   ): Recommendation {
+    if (analysis.category === "legal_compliance") {
+      return buildLegalComplianceRecommendation();
+    }
     if (analysis.category === "spam") {
       return {
         action: "no_action",

@@ -1,4 +1,5 @@
 export const CATEGORIES = [
+    "legal_compliance",
     "sales",
     "support",
     "finance",
