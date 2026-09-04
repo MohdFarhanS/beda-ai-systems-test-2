@@ -117,6 +117,14 @@ Gemini does not select the authoritative CRM record, owner, approval state, perm
 
 Gemini is used through the server-side processing layer. The API key is not exposed to the browser.
 
+## AI Tools Used
+
+**Runtime model (used inside the application):**
+Google Gemini 3.6 Flash, accessed via `@google/genai`. Chosen for its permanent free tier, strong structured-output support, and sufficient capability for classification, extraction, and response drafting at this task complexity.
+
+**Development assistance:**
+Claude was used as an AI coding assistant during development — for architecture planning, code review, and iteration within the 3-hour build window. All design decisions, trade-offs, and final implementation choices were made and validated by me.
+
 ## Project Structure
 
 ```text
@@ -180,6 +188,8 @@ docs/
 ### Installation
 
 ```bash
+git clone https://github.com/MohdFarhanS/beda-ai-systems-test-2.git
+cd beda-ai-systems-test-2
 npm install
 ```
 
