@@ -10,6 +10,12 @@
     {"id":"E009","from":"facilities@harbourcoldstores.example","subject":"Electricity cost reduction","body":"We run a refrigerated warehouse in Newcastle. Bills are around $80,000 a month. Interested in solar and anything else that can reduce operating cost. I am the facilities manager, Sam. Mobile 0411 999 120."},
     {"id":"E010","from":"sam@harbourcoldstores.example","subject":"Re: enquiry from our website","body":"Just correcting my number from the web form. It is 0411 999 102, not 0411 999 120. Please use this email address going forward."},
     {"id":"E011","from":"alerts@beda.example","subject":"CRM sync failed overnight","body":"HubSpot sync job failed at 02:14. Error: OAuth token expired. 146 records remain unsynchronised. Retry disabled after three failures."},
-    {"id":"E012","from":"info@smallcafe.example","subject":"Solar for cafe","body":"We lease a 70 square metre cafe and spend about $900 per month on electricity. Can you quote solar? Landlord has not yet agreed to roof works."}
+    {"id":"E012","from":"info@smallcafe.example","subject":"Solar for cafe","body":"We lease a 70 square metre cafe and spend about $900 per month on electricity. Can you quote solar? Landlord has not yet agreed to roof works."},
+    {
+        "id": "E013",
+        "from": "Amelia Grant amelia.grant@humelogistics.example",
+        "subject": "Regulatory compliance question for our solar project",
+        "body": "We need guidance on regulatory compliance requirements for our proposed solar and battery project across our Victorian sites. Please advise on applicable permits and legal requirements."
+      }
     ]
     
