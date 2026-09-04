@@ -131,15 +131,15 @@ export async function processEnquiry(
           `${error.code}: ${error.message}`,
         ),
       );
-
-      return {
+    
+      const result: ProcessedEnquiry = {
         source: input?.enquiry ?? {
           id: enquiryId,
           from: "",
           subject: "",
           body: "",
         },
-        classification: null as never,
+        classification: null,
         crmMatch: {
           status: "no_match",
           crmId: null,
@@ -154,7 +154,8 @@ export async function processEnquiry(
         recommendation: {
           action: "no_action",
           owner: null,
-          reason: "Processing failed before a deterministic decision could be made.",
+          reason:
+            "Processing failed before a deterministic decision could be made.",
           requiresApproval: false,
         },
         response: {
@@ -171,6 +172,10 @@ export async function processEnquiry(
         status: "failed",
         error: `${error.code}: ${error.message}`,
       };
+    
+      await saveProcessedEnquiry(result);
+    
+      return result;
     }
 
     throw error;
